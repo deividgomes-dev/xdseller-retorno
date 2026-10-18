@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>Conectar Mercado Livre · xDSeller Pro</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 20px 16px;
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #e7edf5; background: radial-gradient(900px 500px at 50% -10%, rgba(47,128,255,.18), transparent 60%), #05070b;
+  }
+  .card { width: 100%; max-width: 560px; background: #0c1118; border: 1px solid #1d2939; border-radius: 16px; padding: 28px; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+  .marca { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; margin-bottom: 18px; }
+  .marca i { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, #2f80ff, #7c5cff); display: inline-block; }
+  h1 { font-size: 20px; margin: 0 0 6px; }
+  p { color: #8b9bb2; margin: 0 0 14px; }
+  textarea {
+    width: 100%; height: 96px; resize: none; padding: 10px 12px; border-radius: 10px; border: 1px solid #2a3a52;
+    background: #121a25; color: #e7edf5; font: 13px/1.4 ui-monospace, Consolas, monospace; word-break: break-all;
+  }
+  button {
+    margin-top: 12px; width: 100%; height: 44px; border: 0; border-radius: 10px; cursor: pointer;
+    background: #2f80ff; color: #fff; font: inherit; font-weight: 650;
+  }
+  button:hover { background: #5b9cff; }
+  .ok { color: #2fbf71; font-weight: 600; margin-top: 10px; min-height: 1.5em; }
+  .erro { background: rgba(242,85,90,.14); color: #f8b4b6; padding: 12px 14px; border-radius: 10px; }
+  ol { color: #8b9bb2; padding-left: 20px; margin: 16px 0 0; }
+  .nota { font-size: 12.5px; color: #5d6c82; margin-top: 18px; }
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="marca"><i></i>xDSeller Pro</div>
+  <div id="conteudo"></div>
+  <p class="nota">Esta página não envia nada para nenhum servidor: ela só mostra o código na sua tela.
+  O código expira em poucos minutos e só funciona junto com a chave que fica no seu computador.</p>
+</main>
+<script>
+(function () {
+  var alvo = document.getElementById("conteudo");
+  var params = new URLSearchParams(location.search);
+  var code = params.get("code");
+  var erro = params.get("error");
+
+  function el(tag, texto, cls) {
+    var e = document.createElement(tag);
+    if (texto) e.textContent = texto;
+    if (cls) e.className = cls;
+    return e;
+  }
+
+  if (code) {
+    var endereco = location.href;
+    // Tira o código da barra de endereço e do histórico do navegador.
+    history.replaceState(null, "", location.pathname);
+    alvo.append(
+      el("h1", "Autorização concluída ✅"),
+      el("p", "Copie o endereço abaixo e cole no xDSeller Pro, na tela “Conectar Mercado Livre”.")
+    );
+    var caixa = el("textarea");
+    caixa.readOnly = true;
+    caixa.value = endereco;
+    var botao = el("button", "Copiar");
+    var aviso = el("div", "", "ok");
+    botao.addEventListener("click", function () {
+      caixa.select();
+      var feito = function () { aviso.textContent = "Copiado! Agora cole no xDSeller Pro."; };
+      if (navigator.clipboard) navigator.clipboard.writeText(endereco).then(feito, function () { document.execCommand("copy"); feito(); });
+      else { document.execCommand("copy"); feito(); }
+    });
+    var passos = el("ol");
+    ["Clique em Copiar.", "Volte para o xDSeller Pro (http://127.0.0.1:8000).", "Cole no campo e clique em Concluir conexão."].forEach(function (t) { passos.append(el("li", t)); });
+    alvo.append(caixa, botao, aviso, passos);
+  } else if (erro) {
+    alvo.append(el("h1", "A autorização não foi concluída"),
+      el("div", "O Mercado Livre respondeu: " + erro + " " + (params.get("error_description") || ""), "erro"),
+      el("p", "Volte ao xDSeller Pro e tente conectar de novo."));
+  } else {
+    alvo.append(el("h1", "Página de retorno do Mercado Livre"),
+      el("p", "Esta página recebe o código de autorização quando você conecta o xDSeller Pro ao Mercado Livre. Para conectar, use o botão “Conectar Mercado Livre” dentro do sistema."));
+  }
+})();
+</script>
+</body>
+</html>
