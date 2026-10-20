@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
-<title>Conectar Mercado Livre · xDSeller Pro</title>
+<title>Conectar loja · xDSeller Pro</title>
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
@@ -48,6 +48,8 @@
   var params = new URLSearchParams(location.search);
   var code = params.get("code");
   var erro = params.get("error");
+  // A Shopee devolve também o número da loja (shop_id); o Mercado Livre não.
+  var loja = params.get("shop_id") ? "Shopee" : "Mercado Livre";
 
   function el(tag, texto, cls) {
     var e = document.createElement(tag);
@@ -62,7 +64,7 @@
     history.replaceState(null, "", location.pathname);
     alvo.append(
       el("h1", "Autorização concluída ✅"),
-      el("p", "Copie o endereço abaixo e cole no xDSeller Pro, na tela “Conectar Mercado Livre”.")
+      el("p", "Copie o endereço abaixo e cole no xDSeller Pro, na tela “Conectar " + loja + "” (Configurações).")
     );
     var caixa = el("textarea");
     caixa.readOnly = true;
@@ -80,11 +82,11 @@
     alvo.append(caixa, botao, aviso, passos);
   } else if (erro) {
     alvo.append(el("h1", "A autorização não foi concluída"),
-      el("div", "O Mercado Livre respondeu: " + erro + " " + (params.get("error_description") || ""), "erro"),
+      el("div", "A loja respondeu: " + erro + " " + (params.get("error_description") || ""), "erro"),
       el("p", "Volte ao xDSeller Pro e tente conectar de novo."));
   } else {
-    alvo.append(el("h1", "Página de retorno do Mercado Livre"),
-      el("p", "Esta página recebe o código de autorização quando você conecta o xDSeller Pro ao Mercado Livre. Para conectar, use o botão “Conectar Mercado Livre” dentro do sistema."));
+    alvo.append(el("h1", "Página de retorno do xDSeller Pro"),
+      el("p", "Esta página recebe o código de autorização quando você conecta o xDSeller Pro ao Mercado Livre ou à Shopee. Para conectar, use os botões “Conectar Mercado Livre” ou “Conectar Shopee” dentro do sistema (Configurações)."));
   }
 })();
 </script>
